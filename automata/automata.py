@@ -1,32 +1,63 @@
 import xml.etree.ElementTree as xml
+import importlib.util as implib
+import pathlib
 
 
 class DescriptionParseError(Exception):
     pass
 
 
-class Automata:
-    HALT = 'HALT'
+class Automaton:
+    HALT = ''
+    class HaltIterable:
+        def __init__(self, iterable):
+            self.iterable = iterable
 
-    def __load_actions(self, fname):
-        def foo(*args):
+        def __iter__(self):
+            for x in self.iterable:
+                yield x
+            yield Automaton.HALT
+
+    class NilFunction:
+        def __init__(self):
+            pass
+
+        def __call__(self, state, tg, action):
             return True
 
-        if fname is not None:
-            pass  # загрузить модуль и вытащить из него функцию
+        def reset(self):
+            pass
+
+        def get_parse_results(self):
+            return dict()
+
+
+    def __load_actions(self, descfname, actfname):
+        def load_from_module(path):
+            spec = implib.spec_from_file_location('mod', path)
+            mod = implib.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            return mod
+
+        if actfname is not None:
+            actp = pathlib.Path(actfname)
+            print(actp)
+            if actp.is_absolute():
+                mod = load_from_module(actfname)
+            else:
+                descp = pathlib.Path(descfname).absolute().parent
+                mod = load_from_module(descp / actp)
+            return mod.load_actions()
         else:
-            return foo
+            return Automaton.NilFunction()
 
     def __parse_states(self, S):
         ret = set()
-        final = set()
         for s in S:
-            if s.tag != 's' or s.tag != 'fs':
+            if s.tag != 's':
                 raise DescriptionParseError('Wrong tag encountered')
             elif s not in ret:
                 ret.add(s.text)
-                if s.tag == 'fs':
-                    final.add(s.text)
             else:
                 raise DescriptionParseError('Encountered duplicate state: '
                                             f'{s.text}')
@@ -34,17 +65,32 @@ class Automata:
         return ret
 
     def __parse_tokens(self, T):
-        tokens = set()
-        for t in T:
-            if t.tag != 't':
-                raise DescriptionParseError('Wrong tag encountered')
-            elif t not in tokens:
-                tokens.add(t.text)
-            else:
-                raise DescriptionParseError('Encountered duplicate token:'
-                                            f'{t.text}')
-
-        return tokens
+        token_groups = set()
+        token_groups.add(Automaton.HALT)
+        token_map = dict()
+        token_map[Automaton.HALT] = Automaton.HALT
+        for group in T:
+            if group.tag != 'tg':
+                raise DescriptionParseError('Wrong tag encountered, '
+                                            'expected tg')
+            groupname = group.attrib['name']
+            token_groups.add(groupname)
+            for t in group:
+                if t.tag !='t':
+                    raise DescriptionParseError('Wrong tag encountered, '
+                                                'expected t')
+                if t.text not in token_map:
+                    token_map[t.text] = groupname
+                else:
+                    raise DescriptionParseError('Token duplicate encountered: '
+                                                f'{t.text}')
+            if not group:
+                if groupname not in token_map:
+                    token_map[groupname] = groupname
+                else:
+                    raise DescriptionParseError(f'Group {groupname} cannot be empty: '
+                                                f'token {groupname} exists')
+        return token_groups, token_map
 
     def __parse_transitions(self, Tr):
         ret = dict()
@@ -52,45 +98,60 @@ class Automata:
             if t.tag != 'tr':
                 raise DescriptionParseError('Wrong tag encountered')
             else:
-                s = t.attrib['state']
+                s = t.attrib['start']
                 if s not in self.states:
                     raise DescriptionParseError('State not in state set:'
                                                 f' {s}')
-                tk = t.attrib['token']
-                if s not in self.tokens:
-                    raise DescriptionParseError('Token not in alphabet:'
-                                                f' {tk}')
-                if (s, tk) in ret:
+                tg = t.attrib['token']
+                if tg not in self.token_groups:
+                    raise DescriptionParseError('Token group not in token map:'
+                                                f' {tg}'
+                                                f'Token map: {self.token_groups}')
+                if (s, tg) in ret:
                     raise DescriptionParseError('Transition ambiguity '
-                                                f'encountered at {(s, tk)}')
+                                                f'encountered at {(s, tg)}')
                 else:
                     action_name = t.attrib.get('action', '')
-                    new_state = t.attrib['new_state']
-                    ret[s, tk] = action_name, new_state
+                    end = t.attrib['end']
+                    if end not in self.states and tg != Automaton.HALT and end != Automaton.HALT:
+                        raise DescriptionParseError('State not in state set: '
+                                                    f'{s} (and is not HALT)')
+                    ret[s, tg] = end, action_name
+
+        if all((s, Automaton.HALT) not in ret for s in self.states):
+            raise DescriptionParseError('HALT transition missing')
         return ret
 
     def __init__(self, filename):
         tree = xml.parse(filename)
         root = tree.getroot()
 
-        self.actions = self.__load_actions(root.get('actions'))
-        self.states, self.finals = self.__parse_states(root.find('states'))
+        self.actions = self.__load_actions(filename, root.get('actions'))
+        self.states = self.__parse_states(root.find('states'))
         if root.attrib['start_state'] not in self.states:
             raise DescriptionParseError(f'State not in state set: {s}')
         self.start_state = root.attrib['start_state']
 
-        self.tokens = self.__parse_tokens(root.find('tokens'))
+        self.token_groups, self.token_map = self.__parse_tokens(root.find('tokens'))
         self.transitions = self.__parse_transitions(root.find('transitions'))
 
     def parse(self, token_stream):
         s = self.start_state
         self.actions.reset()
-        for token in token_stream:
-            if (s, token) not in self.transitions:
+        TS = Automaton.HaltIterable(token_stream)
+        for token in TS:
+            tg = self.token_map[token]
+            print(f'Transitioning from {(s, tg)}({token})')
+            if (s, tg) not in self.transitions:
                 return False
-            new_s, A = self.transitions[s, token]
-            res = self.actions(s, token, A)
+            new_s, A = self.transitions[s, tg]
+            print(f'Transitioned to {new_s}')
+            res = self.actions(s, tg, A)
+
             if not res:
                 return False
             s = new_s
         return True
+
+    def get_parse_results(self):
+        return self.actions.get_parse_results()
