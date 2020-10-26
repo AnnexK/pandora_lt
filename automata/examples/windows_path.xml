@@ -1,0 +1,116 @@
+<automaton start_state="q0">
+  <states>
+    <s>q0</s>
+    <s>q1</s>
+    <s>q2</s>
+    <s>q3</s>
+    <s>q4</s>
+    <s>q5</s>
+    <s>q6</s>
+  </states>
+  <tokens>
+    <tg name="alpha">
+      <t>a</t>
+      <t>b</t>
+      <t>c</t>
+      <t>d</t>
+      <t>e</t>
+      <t>f</t>
+      <t>g</t>
+      <t>h</t>
+      <t>i</t>
+      <t>j</t>
+      <t>k</t>
+      <t>l</t>
+      <t>m</t>
+      <t>n</t>
+      <t>o</t>
+      <t>p</t>
+      <t>q</t>
+      <t>r</t>
+      <t>s</t>
+      <t>t</t>
+      <t>u</t>
+      <t>v</t>
+      <t>w</t>
+      <t>x</t>
+      <t>y</t>
+      <t>z</t>
+      <t>A</t>
+      <t>B</t>
+      <t>C</t>
+      <t>D</t>
+      <t>E</t>
+      <t>F</t>
+      <t>G</t>
+      <t>H</t>
+      <t>I</t>
+      <t>J</t>
+      <t>K</t>
+      <t>L</t>
+      <t>M</t>
+      <t>N</t>
+      <t>O</t>
+      <t>P</t>
+      <t>Q</t>
+      <t>R</t>
+      <t>S</t>
+      <t>T</t>
+      <t>U</t>
+      <t>V</t>
+      <t>W</t>
+      <t>X</t>
+      <t>Y</t>
+      <t>Z</t>
+    </tg>
+    <tg name="."/>
+    <tg name=":"/>
+    <tg name="\"/>
+    <tg name="theta">
+      <t>0</t>
+      <t>1</t>
+      <t>2</t>
+      <t>3</t>
+      <t>4</t>
+      <t>5</t>
+      <t>6</t>
+      <t>7</t>
+      <t>8</t>
+      <t>9</t>
+      <t>@</t>
+      <t>#</t>
+    </tg>
+  </tokens>
+  <transitions>
+    <tr start="q0" token="alpha" end="q3"/>
+    <tr start="q1" token="alpha" end="q3"/>
+    <tr start="q2" token="alpha" end="q4"/>
+    <tr start="q3" token="alpha" end="q4"/>
+    <tr start="q4" token="alpha" end="q4"/>
+    <tr start="q5" token="alpha" end="q4"/>
+    <tr start="q6" token="alpha" end="q4"/>
+    <tr start="q0" token="." end="q1"/>
+    <tr start="q1" token="." end="q2"/>
+    <tr start="q2" token="." end="q4"/>
+    <tr start="q3" token="." end="q4"/>
+    <tr start="q4" token="." end="q4"/>
+    <tr start="q5" token="." end="q1"/>
+    <tr start="q6" token="." end="q1"/>
+    <tr start="q3" token=":" end="q6"/>
+    <tr start="q0" token="\" end="q5"/>
+    <tr start="q1" token="\" end="q5"/>
+    <tr start="q2" token="\" end="q5"/>
+    <tr start="q3" token="\" end="q5"/>
+    <tr start="q4" token="\" end="q5"/>
+    <tr start="q6" token="\" end="q5"/>
+    <tr start="q0" token="theta" end="q4"/>
+    <tr start="q1" token="theta" end="q3"/>
+    <tr start="q2" token="theta" end="q4"/>
+    <tr start="q3" token="theta" end="q4"/>
+    <tr start="q4" token="theta" end="q4"/>
+    <tr start="q5" token="theta" end="q4"/>
+    <tr start="q6" token="theta" end="q4"/>
+    <tr start="q3" token="" end=""/>
+    <tr start="q4" token="" end=""/>
+  </transitions>
+</automaton>
