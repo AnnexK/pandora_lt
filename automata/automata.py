@@ -146,7 +146,7 @@ class Automaton:
                 return False
             new_s, A = self.transitions[s, tg]
             print(f'Transitioned to {new_s}')
-            res = self.actions(s, tg, A)
+            res = self.actions(s, token, A)
 
             if not res:
                 return False
