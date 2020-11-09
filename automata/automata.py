@@ -140,16 +140,15 @@ class Automaton:
         self.actions.reset()
         TS = Automaton.HaltIterable(token_stream)
         for token in TS:
+            if token not in self.token_map:
+                return False
             tg = self.token_map[token]
-            print(f'Transitioning from {(s, tg)}({token})')
             if (s, tg) not in self.transitions:
                 return False
             new_s, A = self.transitions[s, tg]
-            print(f'Transitioned to {new_s}')
-            res = self.actions(s, token, A)
-
-            if not res:
-                return False
+            if A:
+                if not self.actions(s, token, A):
+                    return False
             s = new_s
         return True
 
