@@ -9,6 +9,7 @@ class DescriptionParseError(Exception):
 
 class Automaton:
     HALT = ''
+
     class HaltIterable:
         def __init__(self, iterable):
             self.iterable = iterable
@@ -31,7 +32,6 @@ class Automaton:
         def get_parse_results(self):
             return dict()
 
-
     def __load_actions(self, descfname, actfname):
         def load_from_module(path):
             spec = implib.spec_from_file_location('mod', path)
@@ -41,7 +41,6 @@ class Automaton:
 
         if actfname is not None:
             actp = pathlib.Path(actfname)
-            print(actp)
             if actp.is_absolute():
                 mod = load_from_module(actfname)
             else:
@@ -76,7 +75,7 @@ class Automaton:
             groupname = group.attrib['name']
             token_groups.add(groupname)
             for t in group:
-                if t.tag !='t':
+                if t.tag != 't':
                     raise DescriptionParseError('Wrong tag encountered, '
                                                 'expected t')
                 if t.text not in token_map:
@@ -88,7 +87,8 @@ class Automaton:
                 if groupname not in token_map:
                     token_map[groupname] = groupname
                 else:
-                    raise DescriptionParseError(f'Group {groupname} cannot be empty: '
+                    raise DescriptionParseError(f'Group {groupname} cannot '
+                                                'be empty: '
                                                 f'token {groupname} exists')
         return token_groups, token_map
 
@@ -113,12 +113,12 @@ class Automaton:
                 else:
                     action_name = t.attrib.get('action', '')
                     end = t.attrib['end']
-                    if end not in self.states and tg != Automaton.HALT and end != Automaton.HALT:
+                    if end not in self.states and tg != self.HALT and end != self.HALT:
                         raise DescriptionParseError('State not in state set: '
                                                     f'{s} (and is not HALT)')
                     ret[s, tg] = end, action_name
 
-        if all((s, Automaton.HALT) not in ret for s in self.states):
+        if all((s, self.HALT) not in ret for s in self.states):
             raise DescriptionParseError('HALT transition missing')
         return ret
 
@@ -128,9 +128,10 @@ class Automaton:
 
         self.actions = self.__load_actions(filename, root.get('actions'))
         self.states = self.__parse_states(root.find('states'))
-        if root.attrib['start_state'] not in self.states:
-            raise DescriptionParseError(f'State not in state set: {s}')
         self.start_state = root.attrib['start_state']
+        if self.start_state not in self.states:
+            raise DescriptionParseError('State not in state set: '
+                                        f'{self.start_state}')
 
         self.token_groups, self.token_map = self.__parse_tokens(root.find('tokens'))
         self.transitions = self.__parse_transitions(root.find('transitions'))
@@ -143,9 +144,11 @@ class Automaton:
             if token not in self.token_map:
                 return False
             tg = self.token_map[token]
+            print(f'({s}, {token})')
             if (s, tg) not in self.transitions:
                 return False
             new_s, A = self.transitions[s, tg]
+            print(f'({new_s}, {A})')
             if A:
                 if not self.actions(s, token, A):
                     return False
