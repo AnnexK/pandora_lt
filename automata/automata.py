@@ -144,11 +144,9 @@ class Automaton:
             if token not in self.token_map:
                 return False
             tg = self.token_map[token]
-            print(f'({s}, {token})')
             if (s, tg) not in self.transitions:
                 return False
             new_s, A = self.transitions[s, tg]
-            print(f'({new_s}, {A})')
             if A:
                 if not self.actions(s, token, A):
                     return False

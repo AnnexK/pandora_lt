@@ -12,8 +12,6 @@ with open('lab1/output.txt', 'w') as fp:
         token_stream = A.get_parse_results()['token_stream']
         token_pos = A.get_parse_results()['token_pos']
         token_pos.append(A.get_parse_results()['file_pos'])
-        print(token_stream)
-        print(token_pos)
         B = automata.Automaton('lab1/c_ttr.xml')
         if B.parse(token_stream):
             fp.write('CORRECT\n')
