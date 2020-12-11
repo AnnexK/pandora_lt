@@ -12,6 +12,8 @@
     <s>q9</s>
     <s>q11</s>
     <s>q12</s>
+    <s>q13</s>
+    <s>q14</s>
   </states>
   <tokens>
     <tg name="alpha">
@@ -94,6 +96,7 @@
       <t>float</t>
       <t>bool</t>
     </tg>
+    <tg name="nkw"/>
   </tokens>
   <transitions>
     <tr start="q0" token="long" end="q1" action="advance"/>
@@ -101,11 +104,11 @@
     <tr start="q0" token="double" end="q12" action="advance"/>
     <tr start="q0" token="short" end="q3" action="advance"/>
     <tr start="q0" token="nonmod" end="q2" action="advance"/>
-    <tr start="q1" token="alpha" end="q5" action="add_char"/>
+    <tr start="q1" token="nkw" end="q13" action="nkw_set"/>
     <tr start="q1" token="int" end="q2" action="advance"/>
     <tr start="q1" token="double" end="q2" action="advance"/>
-    <tr start="q2" token="alpha" end="q5" action="add_char"/>
-    <tr start="q3" token="alpha" end="q5" action="add_char"/> 
+    <tr start="q2" token="nkw" end="q13" action="nkw_set"/>
+    <tr start="q3" token="nkw" end="q5" action="nkw_set"/> 
     <tr start="q3" token="int" end="q2" action="advance"/>
     <tr start="q5" token="alpha" end="q5" action="add_char"/>
     <tr start="q5" token="0" end="q5" action="add_char"/>
@@ -113,7 +116,10 @@
     <tr start="q5" token="[" end="q6" action="check_id"/>
     <tr start="q5" token="," end="q2" action="check_id"/>
     <tr start="q5" token=";" end="q7" action="check_id"/>
-    <tr start="q6" token="digit" end="q8" action="add_char"/>
+    <!-- ERROR -->
+    <tr start="q5" token="nkw" end="" action="nkw_err"/>
+    <tr start="q5" token="" end="" action="nkw_err"/>
+    <tr start="q6" token="nkw" end="q14" action="nkw_set"/>
     <tr start="q7" token="long" end="q1" action="advance"/>
     <tr start="q7" token="int" end="q11" action="advance"/>
     <tr start="q7" token="double" end="q12" action="advance"/>
@@ -122,15 +128,20 @@
     <tr start="q7" token="" end=""/>
     <tr start="q8" token="0" end="q8" action="add_char"/>
     <tr start="q8" token="digit" end="q8" action="add_char"/>
-    <tr start="q8" token="]" end="q9" action="advance"/>
+    <tr start="q8" token="]" end="q9" action="wipe"/>
+    <!-- ERROR -->
+    <tr start="q8" token="nkw" end="" action="nkw_err"/>
+    <tr start="q8" token="" end="" action="nkw_err"/>
     <tr start="q9" token="[" end="q6" action="advance"/>
     <tr start="q9" token="," end="q2" action="advance"/>
     <tr start="q9" token=";" end="q7" action="advance"/>
-    <tr start="q11" token="alpha" end="q5" action="add_char"/>
+    <tr start="q11" token="nkw" end="q5" action="nkw_set"/>
     <tr start="q11" token="long" end="q2" action="advance"/>
     <tr start="q11" token="short" end="q2" action="advance"/>
-    <tr start="q12" token="alpha" end="q5" action="add_char"/>
+    <tr start="q12" token="nkw" end="q13" action="nkw_set"/>
     <tr start="q12" token="long" end="q2" action="advance"/>
+    <tr start="q13" token="alpha" end="q5" action="add_char"/>
+    <tr start="q14" token="digit" end="q8" action="add_char"/>
   </transitions>
 </automaton>
 
