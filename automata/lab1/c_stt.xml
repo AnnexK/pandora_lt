@@ -1,7 +1,6 @@
 <automaton actions="c_stt.py" start_state="q0">
   <states>
     <s>q0</s>
-    <s>HALT</s>
   </states>
   <tokens>
     <tg name="alphabet">
@@ -88,5 +87,3 @@
     <tr start="q0" token="" end=""/>
   </transitions>
 </automaton>
-
-    
