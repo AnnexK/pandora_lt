@@ -138,6 +138,7 @@ class Automaton:
 
     def parse(self, token_stream):
         s = self.start_state
+        print(s)
         self.actions.reset()
         TS = Automaton.HaltIterable(token_stream)
         for token in TS:
@@ -151,6 +152,7 @@ class Automaton:
                 if not self.actions(s, token, A):
                     return False
             s = new_s
+            print(token, s)
         return True
 
     def get_parse_results(self):
