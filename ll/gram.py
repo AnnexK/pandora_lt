@@ -38,9 +38,9 @@ class TableRow:
         self.error = False
         
     def __str__(self):
-        s = (#f"{self.terminals}\t"
-             #f"{str(self.action)}\t"
-             #f"{self.jump}\t"
+        s = (f"{self.terminals}\t"
+             f"{self.action if self.action else 'NIL'}\t"
+             f"{self.jump}\t"
              f"{self.accept}\t"
              f"{self.stack}\t"
              f"{self.ret}\t"
@@ -85,24 +85,24 @@ class GrammarParser:
             raise GrammarParserException('Not a grammar')
         res = GrammarParser.A.get_parse_results()
         rules = res["ruleset"]
-        for r in rules:
-            print(r.left, r.right, r.actions)
+        for i, r in enumerate(rules):
+            print(i, r.left, r.right, r.actions)
         self.nt = set(r.left for r in rules)
-        print(f"Non-terminals: {self.nt}")
+#        print(f"Non-terminals: {self.nt}")
         self.enumerate_rules(rules)
-        for r in rules:
-            print(r.nleft, r.nright, r.actions)
+#        for r in rules:
+#            print(r.nleft, r.nright, r.actions)
         St = self.start_sets(rules)
-        print(St)
+#        print(St)
         Fo = self.follow_sets(rules, St)
-        print(Fo)
+#        print(Fo)
         Te = self.term_sets(rules, St, Fo)
-        print(Te)
+#        print(Te)
         if not self.isLL(rules, Te):
             raise GrammarParserException('Not an LL(1)-grammar')
         self.table = self.build_table(St, Fo, Te, rules)
-        for i, t in enumerate(self.table):
-            print(t)
+#        for i, t in enumerate(self.table):
+#            print(t)
         self.actions = actions
 
     def enumerate_rules(self, R):
@@ -111,12 +111,12 @@ class GrammarParser:
         prev = R[0].left
         while i < len(R):
             if R[i].left == prev:
-                print(f'Encountered same rule {R[i].left, R[i].right}')
+#                print(f'Encountered same rule {R[i].left, R[i].right}')
                 R[i].nleft = count
                 count += 1
                 i += 1
             else:
-                print(f'Encountered different rule {R[i].left, R[i].right}')
+#                print(f'Encountered different rule {R[i].left, R[i].right}')
                 j = i-1
                 while j > 0 and R[j-1].left == prev:
                     j -= 1
@@ -129,7 +129,7 @@ class GrammarParser:
         j = i-1
         while j > 0 and R[j-1].left == prev:
             j -= 1
-            print(j, i)
+#            print(j, i)
         while j < i:
             R[j].nright = count
             count += len(R[j].right)
@@ -181,7 +181,8 @@ class GrammarParser:
     def isLL(self, R, Te):
         for i, ti in enumerate(Te):
             for j, tj in enumerate(Te):
-                if i != j and R[i].left == R[i].right and ti & tj:
+                if i != j and R[i].left == R[j].left and ti & tj:
+                    print(f'Rules {i}({R[i].left}, {ti}), {j}({R[j].left}, {tj})')
                     return False
         return True
 
@@ -189,11 +190,11 @@ class GrammarParser:
         rulenum = 0
         Ml = set(r.nleft for r in R)
         Mr = set(r.nright+len(r.right)-1 for r in R)
-        print(Ml, Mr)
+#        print(Ml, Mr)
         table = [TableRow() for i in range(max(Mr)+1)]
         for i, r in enumerate(R):
             n = r.nleft
-            print(n)
+#            print(n)
             table[n].terminals = Te[i]
             table[n].action = r.actions[0]
             table[n].jump = r.nright
@@ -204,7 +205,7 @@ class GrammarParser:
             table[n].error = n+1 not in Ml
             n = r.nright
             for k, tk in enumerate(r.right):
-                print(n, n+k)
+#                print(n, n+k)
 
                 # terminals
                 if not tk:
@@ -248,6 +249,7 @@ class GrammarParser:
 
         while True:
             t = self.table[tab]
+            print(tab, '\t', t, stk, token)
             if token in t.terminals:
                 if t.accept:
                     A = t.action

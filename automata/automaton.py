@@ -152,7 +152,7 @@ class Automaton:
                 if not self.actions(s, token, A):
                     return False
             s = new_s
-            print(token, s)
+            print(f"{token.encode()}, {s}")
         return True
 
     def get_parse_results(self):
