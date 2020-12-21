@@ -191,6 +191,7 @@
     <tr start="q10" token="other" end="q6" action="add_char"/>
     <tr start="q10" token="Astart" end="q9"/>
     <tr start="q10" token="$" end="q15" action="add_empty"/>
+    <tr start="q10" token="nl" end="q8" action="add_rule"/>
     <tr start="q11" token="-" end="q12" action="add_char"/>
     <tr start="q11" token=":" end="q12" action="add_char"/>
     <tr start="q11" token="|" end="q12" action="add_char"/>
