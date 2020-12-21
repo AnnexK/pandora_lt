@@ -38,6 +38,7 @@ class Dispatcher:
             return False
         if not self.ruleset[-1].actions:
             self.ruleset[-1].actions.append('')
+        print(self.ruleset[-1].actions)
         return True
 
     def append_nt(self, s, t):
@@ -45,12 +46,12 @@ class Dispatcher:
 
     def add_right(self, s, t):
         r = self.ruleset[-1]
-        if len(r.right) == len(r.actions):
-            r.actions.append('')
         if self.buffer:
             s = ''.join(self.buffer)
             r.right.append(s)
             self.buffer.clear()
+        if len(r.right) == len(r.actions):
+            r.actions.append('')
         return True
 
     def add_rule(self, s, t):
