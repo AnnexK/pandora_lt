@@ -25,7 +25,8 @@
     <s>q22</s>
     <s>q23</s>
     <s>q24</s>
-    <s>q25</s>    
+    <s>q25</s>
+    <s>q26</s>
   </states>
   <tokens>
     <tg name="-"/>
@@ -140,11 +141,10 @@
   <transitions>
     <tr start="q0" token=" " end="q0"/>
     <tr start="q0" token="other" end="q1" action="add_char"/>
-    <tr start="q1" token="-" end="q2" action="start_right"/>
+    <tr start="q1" token="-" end="q2" action="add_left"/>
     <tr start="q1" token="\" end="q3"/>
-    <tr start="q1" token=" " end="q4" action="append_nt"/>
+    <tr start="q1" token=" " end="q4" action="add_left"/>
     <tr start="q1" token="other" end="q1" action="add_char"/>
-    <tr start="q1" token="Astart" end="q21" action="append_nt"/>
     <tr start="q2" token=":" end="q5"/>
     <tr start="q3" token="-" end="q1" action="add_char"/>
     <tr start="q3" token=":" end="q1" action="add_char"/>
@@ -156,13 +156,14 @@
     <tr start="q3" token="Astart" end="q1" action="add_char"/>
     <tr start="q3" token="Aend" end="q1" action="add_char"/>
     <tr start="q3" token="$" end="q1" action="add_char"/>
-    <tr start="q4" token="-" end="q2" action="start_right"/>
+    <tr start="q4" token="-" end="q2"/>
     <tr start="q4" token=" " end="q4"/>
     <tr start="q4" token="Astart" end="q21"/>
     <tr start="q5" token="\" end="q7"/>
     <tr start="q5" token=" " end="q5"/>
-    <tr start="q5" token="other" end="q6" action="add_char"/>
+    <tr start="q5" token="other" end="q6" action="start_right_token"/>
     <tr start="q5" token="$" end="q15" action="add_empty"/>
+    <tr start="q5" token="Astart" end="q21"/>
     <tr start="q6" token="|" end="q5" action="add_alt"/>
     <tr start="q6" token="\" end="q7"/>
     <tr start="q6" token=" " end="q10" action="add_right"/>
@@ -188,7 +189,7 @@
     <tr start="q10" token="|" end="q5" action="add_alt"/>
     <tr start="q10" token="\" end="q7"/>
     <tr start="q10" token=" " end="q10"/>
-    <tr start="q10" token="other" end="q6" action="add_char"/>
+    <tr start="q10" token="other" end="q6" action="start_right_token"/>
     <tr start="q10" token="Astart" end="q9"/>
     <tr start="q10" token="$" end="q15" action="add_empty"/>
     <tr start="q10" token="nl" end="q8" action="add_rule"/>
@@ -212,7 +213,7 @@
     <tr start="q14" token="\" end="q7"/>
     <tr start="q14" token=" " end="q14"/>
     <tr start="q14" token="nl" end="q8" action="add_rule"/>
-    <tr start="q14" token="other" end="q6" action="add_char"/>
+    <tr start="q14" token="other" end="q6" action="start_right_token"/>
     <tr start="q14" token="$" end="q15" action="add_empty"/>
     <tr start="q15" token="|" end="q5" action="add_alt"/>
     <tr start="q15" token=" " end="q15"/>
@@ -242,15 +243,17 @@
     <tr start="q20" token="nl" end="q8" action="add_rule"/>
     <tr start="q21" token="\" end="q22"/>
     <tr start="q21" token=" " end="q21"/>
-    <tr start="q21" token="other" end="q23" action="add_char"/>
+    <tr start="q21" token="other" end="q23" action="add_char"/>p
     <tr start="q23" token="\" end="q22"/>
     <tr start="q23" token=" " end="q24"/>
     <tr start="q23" token="other" end="q23" action="add_char"/>
-    <tr start="q23" token="Aend" end="q25" action="add_action"/>
+    <tr start="q23" token="Aend" end="q25" action="add_action_left"/>
     <tr start="q24" token=" " end="q24"/>
-    <tr start="q24" token="Aend" end="q25" action="add_action"/>
-    <tr start="q25" token="-" end="q2" action="start_right"/>
+    <tr start="q24" token="Aend" end="q25" action="add_action_left"/>
+    <tr start="q25" token="other" end="q6" action="start_right_token"/>
+    <tr start="q25" token="\" end="q26"/>
     <tr start="q25" token=" " end="q25"/>
+    <tr start="q25" token="$" end="q15" action="add_empty"/>
     <tr start="q22" token="-" end="q23" action="add_char"/>
     <tr start="q22" token=":" end="q23" action="add_char"/>
     <tr start="q22" token="|" end="q23" action="add_char"/>
@@ -261,5 +264,15 @@
     <tr start="q22" token="Astart" end="q23" action="add_char"/>
     <tr start="q22" token="Aend" end="q23" action="add_char"/>
     <tr start="q22" token="$" end="q23" action="add_char"/>
+    <tr start="q26" token="-" end="q6" action="start_right_token"/>
+    <tr start="q26" token=":" end="q6" action="start_right_token"/>
+    <tr start="q26" token="|" end="q6" action="start_right_token"/>
+    <tr start="q26" token="\" end="q6" action="start_right_token"/>
+    <tr start="q26" token=" " end="q6" action="start_right_token"/>
+    <tr start="q26" token="nl" end="q6" action="start_right_token"/>
+    <tr start="q26" token="other" end="q6" action="start_right_token"/>
+    <tr start="q26" token="Astart" end="q6" action="start_right_token"/>
+    <tr start="q26" token="Aend" end="q6" action="start_right_token"/>
+    <tr start="q26" token="$" end="q6" action="start_right_token"/>
   </transitions>
 </automaton>

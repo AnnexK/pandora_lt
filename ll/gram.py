@@ -25,8 +25,6 @@ def S_chain(N, R, S, A):
     return ret | d
 
 
-
-
 class TableRow:
     def __init__(self):
         self.terminals = set()
@@ -36,7 +34,7 @@ class TableRow:
         self.stack = False
         self.ret = False
         self.error = False
-        
+
     def __str__(self):
         s = (f"{self.terminals}\t"
              f"{self.action if self.action else 'NIL'}\t"
@@ -50,6 +48,7 @@ class TableRow:
     def __repr__(self):
         return str(self)
 
+
 class GrammarParserException(Exception):
     pass
 
@@ -57,8 +56,10 @@ class GrammarParserException(Exception):
 class NilAction:
     def __init__(self):
         pass
+
     def __call__(self, A, t):
         return True
+
     def get_parse_results(self):
         return dict()
 
@@ -86,7 +87,7 @@ class GrammarParser:
         res = GrammarParser.A.get_parse_results()
         rules = res["ruleset"]
         for i, r in enumerate(rules):
-            print(i, r.left, r.right, r.actions)
+            print(i, r.left, r.laction, r.right, r.raction)
         self.nt = set(r.left for r in rules)
 #        print(f"Non-terminals: {self.nt}")
         self.enumerate_rules(rules)
@@ -187,7 +188,6 @@ class GrammarParser:
         return True
 
     def build_table(self, St, Fo, Te, R):
-        rulenum = 0
         Ml = set(r.nleft for r in R)
         Mr = set(r.nright+len(r.right)-1 for r in R)
 #        print(Ml, Mr)
@@ -196,7 +196,7 @@ class GrammarParser:
             n = r.nleft
 #            print(n)
             table[n].terminals = Te[i]
-            table[n].action = r.actions[0]
+            table[n].action = r.laction
             table[n].jump = r.nright
             table[n].accept = False
             table[n].stack = False
@@ -220,7 +220,7 @@ class GrammarParser:
                     S -= {''}
                     table[n+k].terminals = S
 
-                table[n+k].action = r.actions[k+1]
+                table[n+k].action = r.raction[k]
 
                 # jump
                 if tk not in self.nt:
