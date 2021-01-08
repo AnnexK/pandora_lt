@@ -3,3 +3,4 @@
 *.ods
 #*#
 __pycache__
+*.txt
