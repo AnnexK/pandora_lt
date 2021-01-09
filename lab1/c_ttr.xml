@@ -1,6 +1,5 @@
-<automaton actions="c_ttr.py" start_state="q0">
+<automaton start_state="q0">
   <states>
-    <s>HALT</s>
     <s>q0</s>
     <s>q1</s>
     <s>q2</s>
@@ -116,9 +115,16 @@
     <tr start="q5" token="[" end="q6" action="check_id"/>
     <tr start="q5" token="," end="q2" action="check_id"/>
     <tr start="q5" token=";" end="q7" action="check_id"/>
-    <!-- ERROR -->
+    <!-- NONKEYWORD ERROR -->
     <tr start="q5" token="nkw" end="" action="nkw_err"/>
+    <tr start="q5" token="]" end="" action="nkw_err"/>
+    <tr start="q5" token="int" end="" action="nkw_err"/>
+    <tr start="q5" token="short" end="" action="nkw_err"/>
+    <tr start="q5" token="nonmod" end="" action="nkw_err"/>
+    <tr start="q5" token="long" end="" action="nkw_err"/>
+    <tr start="q5" token="double" end="" action="nkw_err"/>
     <tr start="q5" token="" end="" action="nkw_err"/>
+    <!-- /NONKEYWORD ERROR -->
     <tr start="q6" token="nkw" end="q14" action="nkw_set"/>
     <tr start="q7" token="long" end="q1" action="advance"/>
     <tr start="q7" token="int" end="q11" action="advance"/>
@@ -129,9 +135,18 @@
     <tr start="q8" token="0" end="q8" action="add_char"/>
     <tr start="q8" token="digit" end="q8" action="add_char"/>
     <tr start="q8" token="]" end="q9" action="wipe"/>
-    <!-- ERROR -->
+    <!-- NONKEYWORD ERROR -->
     <tr start="q8" token="nkw" end="" action="nkw_err"/>
     <tr start="q8" token="" end="" action="nkw_err"/>
+    <tr start="q8" token="int" end="" action="nkw_err"/>
+    <tr start="q8" token="double" end="" action="nkw_err"/>
+    <tr start="q8" token="long" end="" action="nkw_err"/>
+    <tr start="q8" token="short" end="" action="nkw_err"/>
+    <tr start="q8" token="nonmod" end="" action="nkw_err"/>
+    <tr start="q8" token="[" end="" action="nkw_err"/>
+    <tr start="q8" token="," end="" action="nkw_err"/>
+    <tr start="q8" token=";" end="" action="nkw_err"/>
+    <!-- /NONKEYWORD ERROR -->
     <tr start="q9" token="[" end="q6" action="advance"/>
     <tr start="q9" token="," end="q2" action="advance"/>
     <tr start="q9" token=";" end="q7" action="advance"/>
@@ -144,7 +159,3 @@
     <tr start="q14" token="digit" end="q8" action="add_char"/>
   </transitions>
 </automaton>
-
-    
-    
-    

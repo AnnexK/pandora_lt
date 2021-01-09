@@ -1,4 +1,4 @@
-<automaton actions="c_stt.py" start_state="q0">
+<automaton start_state="q0">
   <states>
     <s>q0</s>
   </states>
