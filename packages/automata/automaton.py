@@ -192,13 +192,11 @@ class Automaton:
     def parse(self, token_stream: Iterable[str]) -> bool:
         # текущее состояние автомата
         s = self.start_state
-        print(s)
         # сбросить состояние диспетчера
         self.actions.reset()
         # обернуть поток в HaltIterable
         TS = Automaton.HaltIterable(token_stream)
         for token in TS:
-            print(s, token)
             # встречена лексема не из алфавита            
             if token not in self.token_map:
                 return False
@@ -212,5 +210,4 @@ class Automaton:
                 return False
             # перейти к новому состоянию
             s = new_s
-            print(s, A)
         return True
