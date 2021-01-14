@@ -46,10 +46,6 @@ class Automaton:
         def reset(self) -> None:
             pass
 
-        # результатов тоже нет
-        def get_parse_results(self) -> Dict[str, Any]:
-            return dict()
-
     # разобрать состояния в xml файле
     # S -- кусок дерева xml, содержащий описания состояний:
     # <states>
@@ -202,6 +198,7 @@ class Automaton:
         # обернуть поток в HaltIterable
         TS = Automaton.HaltIterable(token_stream)
         for token in TS:
+            print(s, token)
             # встречена лексема не из алфавита            
             if token not in self.token_map:
                 return False
@@ -215,4 +212,5 @@ class Automaton:
                 return False
             # перейти к новому состоянию
             s = new_s
+            print(s, A)
         return True

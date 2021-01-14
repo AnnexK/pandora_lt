@@ -1,12 +1,18 @@
+import inspect
 from copy import deepcopy
-from automata import Automaton
-from .dispatcher import Rule
+from ..automata import Automaton
+from .dispatcher import Rule, Dispatcher
 import pathlib
 from functools import reduce
 from operator import or_ as union
 
 
 def S_single(N, R, S, X):
+    if isinstance(X, set):
+        if X & N:
+            raise GrammarParserException('Non-terminal in terminal range')
+        else:
+            return X
     if X not in N:
         return {X}
     else:
@@ -60,9 +66,6 @@ class NilAction:
     def __call__(self, A, t):
         return True
 
-    def get_parse_results(self):
-        return dict()
-
 
 class HaltIterable:
     def __init__(self, iterable):
@@ -71,40 +74,34 @@ class HaltIterable:
     def __iter__(self):
         for x in self.iterable:
             yield x
-        yield None
+        yield ''
 
 
 class GrammarParser:
-    p = pathlib.Path('ll/grammar.xml').absolute()
-    print(p)
-    A = Automaton(p)    
+    p = pathlib.Path(__file__).parent / 'grammar.xml'
+    D = Dispatcher()
+    A = Automaton(str(p), D)
     
-    def __init__(self, filename, actions=NilAction()):
+    def __init__(self, filename, disp=NilAction()):
         with open(filename) as fp:
             s = fp.read()
         if not GrammarParser.A.parse(s):
             raise GrammarParserException('Not a grammar')
-        res = GrammarParser.A.get_parse_results()
-        rules = res["ruleset"]
+        rules = GrammarParser.D.ruleset
         for i, r in enumerate(rules):
-            print(i, r.left, r.laction, r.right, r.raction)
+            print(i, r.left, r.laction if r.laction else '\'\'', r.right, r.raction)
         self.nt = set(r.left for r in rules)
-#        print(f"Non-terminals: {self.nt}")
         self.enumerate_rules(rules)
-#        for r in rules:
-#            print(r.nleft, r.nright, r.actions)
+        for r in rules:
+            print(r.nleft, r.nright, r.laction, r.raction)
         St = self.start_sets(rules)
-#        print(St)
         Fo = self.follow_sets(rules, St)
-#        print(Fo)
         Te = self.term_sets(rules, St, Fo)
-#        print(Te)
         if not self.isLL(rules, Te):
             raise GrammarParserException('Not an LL(1)-grammar')
         self.table = self.build_table(St, Fo, Te, rules)
-#        for i, t in enumerate(self.table):
-#            print(t)
-        self.actions = actions
+        self.denonify()
+        self.dispatcher = disp
 
     def enumerate_rules(self, R):
         count = 0
@@ -121,7 +118,7 @@ class GrammarParser:
                 j = i-1
                 while j > 0 and R[j-1].left == prev:
                     j -= 1
-                print(j, i)
+#                print(j, i)
                 while j < i:
                     R[j].nright = count
                     count += len(R[j].right)
@@ -153,7 +150,7 @@ class GrammarParser:
     def follow_sets(self, R, St):
         S = {n: set() for n in self.nt}
         S[R[0].left].add(None)
-        print(S)
+#         print(S)
         new = True
         while new:
             new = False
@@ -208,8 +205,10 @@ class GrammarParser:
 #                print(n, n+k)
 
                 # terminals
-                if not tk:
+                if not tk: # пустая строка
                     table[n+k].terminals = Te[i]
+                elif isinstance(tk, set):
+                    table[n+k].terminals = tk
                 elif tk not in self.nt:
                     table[n+k].terminals = {tk}
                 else:
@@ -238,14 +237,21 @@ class GrammarParser:
                 table[n+k].error = True
         return table
 
+    def denonify(self):
+        for t in self.table:
+            if None in t.terminals:
+                t.terminals -= {None}
+                t.terminals.add('')
+
     def parse(self, token_stream):
+        self.dispatcher.reset()
         stk = []
         s = HaltIterable(token_stream)
         tab = 0
         
         it = iter(s)
         token = next(it)
-        stk.append((-1, []))
+        stk.append(-1)
 
         while True:
             t = self.table[tab]
@@ -254,30 +260,21 @@ class GrammarParser:
                 if t.accept:
                     A = t.action
                     if A:
-                        if not self.actions(A, token):
+                        if not self.dispatcher(A, token):
                             return False
                     token = next(it)
                 if t.stack:
-                    stk.append((tab, [t.action]))
+                    stk.append(tab)
                 if t.ret:
-                    tab, A = stk.pop()
-                    for a in A:
-                        if a:
-                            if not self.actions(a, token):
-                                return False
+                    tab = stk.pop()
                     if tab < 0:
                         break
                     tab += 1
                     continue
                 if t.jump >= 0:
-                    if t.action and not t.accept and not t.stack:
-                        stk[-1][1].append(t.action)
                     tab = t.jump
             elif not t.error:
                 tab += 1
             else:
                 break
         return not token and not stk
-
-    def get_parse_results(self):
-        return self.actions.get_parse_results()

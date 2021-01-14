@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from automata import Automaton
-from lab1 import STTDispatcher, TTRDispatcher
+from packages.automata import Automaton
+from packages.lab1 import STTDispatcher, TTRDispatcher
 
 with open('input.txt', 'r') as fp:
     s = fp.read()
@@ -9,7 +9,7 @@ with open('input.txt', 'r') as fp:
 with open('output.txt', 'w') as fp:
     STTD = STTDispatcher()
     # лексер
-    A = Automaton('lab1/c_stt.xml', STTD)
+    A = Automaton('packages/lab1/c_stt.xml', STTD)
 
     if A.parse(s):
         token_stream = STTD.token_stream
@@ -18,7 +18,7 @@ with open('output.txt', 'w') as fp:
         token_pos.append(STTD.last_char_pos)
 
         TTRD = TTRDispatcher()
-        B = Automaton('lab1/c_ttr.xml', TTRD)
+        B = Automaton('packages/lab1/c_ttr.xml', TTRD)
         if B.parse(token_stream):
             fp.write('CORRECT\n')
         else:

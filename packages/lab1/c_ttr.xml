@@ -107,7 +107,7 @@
     <tr start="q1" token="int" end="q2" action="advance"/>
     <tr start="q1" token="double" end="q2" action="advance"/>
     <tr start="q2" token="nkw" end="q13" action="nkw_set"/>
-    <tr start="q3" token="nkw" end="q5" action="nkw_set"/> 
+    <tr start="q3" token="nkw" end="q13" action="nkw_set"/> 
     <tr start="q3" token="int" end="q2" action="advance"/>
     <tr start="q5" token="alpha" end="q5" action="add_char"/>
     <tr start="q5" token="0" end="q5" action="add_char"/>
@@ -132,9 +132,9 @@
     <tr start="q7" token="short" end="q3" action="advance"/>
     <tr start="q7" token="nonmod" end="q2" action="advance"/>
     <tr start="q7" token="" end=""/>
-    <tr start="q8" token="0" end="q8" action="add_char"/>
-    <tr start="q8" token="digit" end="q8" action="add_char"/>
-    <tr start="q8" token="]" end="q9" action="wipe"/>
+    <tr start="q8" token="0" end="q8"/>
+    <tr start="q8" token="digit" end="q8"/>
+    <tr start="q8" token="]" end="q9" action="advance"/>
     <!-- NONKEYWORD ERROR -->
     <tr start="q8" token="nkw" end="" action="nkw_err"/>
     <tr start="q8" token="" end="" action="nkw_err"/>

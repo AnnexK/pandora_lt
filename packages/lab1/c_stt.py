@@ -1,4 +1,4 @@
-from automata import AutomatonActionDispatcher
+from ..automata import AutomatonActionDispatcher
 from typing import List, Tuple, Dict, Callable, Any
 
 class STTDispatcher(AutomatonActionDispatcher):

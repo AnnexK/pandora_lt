@@ -1,4 +1,4 @@
-from automata import AutomatonActionDispatcher
+from ..automata import AutomatonActionDispatcher
 from typing import List, Dict, Set, Optional, Callable, Any
 
 
@@ -31,11 +31,6 @@ class TTRDispatcher(AutomatonActionDispatcher):
         self.nkw = False
         return True
 
-    # очистить буфер
-    def wipe(self, s: str, t: str) -> bool:
-        self.buffer.clear()
-        return self.advance(s, t)
-
     # проверить идентификатор на присутствие
     # во множестве распознанных идентификаторов
     def check_id(self, s: str, t: str) -> bool:
@@ -45,7 +40,8 @@ class TTRDispatcher(AutomatonActionDispatcher):
             return False
         else:
             self.ids.add(ident)
-            return self.wipe(s, t)
+            self.buffer.clear()
+            return self.advance(s, t)
 
     # добавить символ в буфер
     # не продвигает счетчик лексем (идентификатор считается одной лексемой)
@@ -60,10 +56,9 @@ class TTRDispatcher(AutomatonActionDispatcher):
         return True
 
     # выбросить ошибку и сбросить флаг
-    # выполняется, когда встречается лексема "неключевое слово"
+    # выполняется, когда встречается неверная лексема
     # после символа идентификатора
-    # и делает так, что err_tok указывает на второй (ошибочный)
-    # идентификатор
+    # и делает так, что err_tok указывает на лексему
     def nkw_err(self, s: str, t: str) -> bool:
         self.nkw = False
         return False
@@ -74,8 +69,7 @@ class TTRDispatcher(AutomatonActionDispatcher):
             'add_char': self.add_char,
             'check_id': self.check_id,
             'nkw_set': self.nkw_set,
-            'nkw_err': self.nkw_err,
-            'wipe': self.wipe
+            'nkw_err': self.nkw_err
         }
         return actions_map[A](s, t)
 
