@@ -1,0 +1,49 @@
+NS_BODY -: NS_ELEMENT | NS_ELEMENT NS_BODY
+NS_ELEMENT -: FOO | NS
+NS <goto_parent> -: namespace <count> NS_NAME NAMESPACE
+NS_NAME <set_current_ns> -: ID
+NAMESPACE -: { <count> } <count> | { <count> NS_BODY } <count>
+
+ID -: nkw <set_nkw> IDCONTENT
+IDCONTENT -: [A-Za-z_] <add_char> | [A-Za-z_] <add_char> RESTCONTENT
+RESTCONTENT -: [A-Za-z_] <add_char> | 0<add_char> | [1-9]<add_char> | RESTCONTENT RESTCONTENT
+
+FOO <commit_foo> -: RETURN_TYPE FOO_NAME PARAMS FOO_BODY 
+FOO_NAME <create_foo> -: ID
+PARAMS -: ( <count> ) <count> | ( <count> PARAM_LIST ) <count>
+FOO_BODY -: { <count> } <make_impl> | ; <make_prot>
+RETURN_TYPE <register_type> -: BASE_TYPE | void <register_prim>
+SIZES -: long<register_size> 
+SIZES -: short<register_size>
+SIGNS -: signed<register_sign>
+SIGNS -: unsigned<register_sign>
+BASE_TYPE -: int<register_prim> | int<register_prim> INTMORE
+BASE_TYPE -: double<register_prim> | double<register_prim> long<register_size>
+BASE_TYPE -: float<register_prim>
+BASE_TYPE -: bool<register_prim>
+BASE_TYPE -: char<register_prim> | char<register_prim> SIGNS
+BASE_TYPE -: long<register_size> | long<register_size> LONGMORE
+BASE_TYPE -: short<register_size> | short<register_size> SHORTMORE
+BASE_TYPE -: signed<register_sign> | signed<register_sign> SMORE
+BASE_TYPE -: unsigned<register_sign> | unsigned<register_sign> SMORE
+INTMORE -: SIZES | SIZES SIGNS | SIGNS SIZES | SIGNS
+LONGMORE -: double<register_prim> | int<register_prim> | int<register_prim> SIGNS
+LONGMORE -: SIGNS | SIGNS int<register_prim>
+SHORTMORE -: int<register_prim> | int<register_prim> SIGNS | SIGNS | SIGNS int<register_prim>
+SMORE -: int<register_prim> SIZES | int<register_prim> | SIZES | SIZES int<register_prim>
+SMORE -: char<register_prim>
+
+PARAM_LIST -: void <count> | NONVOID_PARAM_LIST
+NONVOID_PARAM_LIST -: PARAM | PARAM , <count> PARAM_REST
+PARAM <create_param> -: PARAM_TYPE | PARAM_TYPE PARAM_VAL
+PARAM_TYPE <register_type> -: BASE_TYPE
+PARAM_VAL -: ARRAY_SPECIFIERS | PARAM_NAME | PARAM_NAME ARRAY_SPECIFIERS
+PARAM_NAME <set_parm_name> -: ID
+PARAM_REST -: ...<register_ellipsis> | NONVOID_PARAM_LIST
+ARRAY_SPECIFIERS -: NULL_ARRAY_SPECIFIER | NULL_ARRAY_SPECIFIER NOTNULL_ARRAY_SPECIFIERS
+NULL_ARRAY_SPECIFIER -: \[ <count> \] <add_dim> | ARRAY_SPECIFIER
+ARRAY_SPECIFIER -: \[ <count> ARR_SIZE \] <add_dim>
+NOTNULL_ARRAY_SPECIFIERS -: ARRAY_SPECIFIER | ARRAY_SPECIFIER NOTNULL_ARRAY_SPECIFIERS
+ARR_SIZE -: nkw <set_nkw> NUMBER
+NUMBER -: [1-9] <add_char> | [1-9] <add_char> NUMBER_REST
+NUMBER_REST -: 0 <add_char> | [1-9] <add_char> | NUMBER_REST NUMBER_REST
