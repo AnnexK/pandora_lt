@@ -1,0 +1,5 @@
+LEX -: [A-Za-z0-9_] <add_char> LEXMORE
+LEX -: [\[\],;{}()] <append> LEXMORE
+LEX -: [\ \t\n] <delim_char> LEXMORE
+LEX -: . <delim_char> . <delim_char> . <add_ellipsis> LEXMORE
+LEXMORE -: LEX | $
