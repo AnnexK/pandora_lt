@@ -1,4 +1,4 @@
-<automaton actions="dispatcher.py" start_state="q0">
+<automaton start_state="q0">
   <states>
     <s>q0</s>
     <s>q1</s>
@@ -151,6 +151,7 @@
   </tokens>
   <transitions>
     <tr start="q0" token=" " end="q0"/>
+    <tr start="q0" token="nl" end="q0"/>
     <tr start="q0" token="other" end="q1" action="add_char"/>
 
     <tr start="q1" token="-" end="q2" action="add_left"/>
@@ -206,6 +207,7 @@
     <tr start="q7" token="Aend" end="q6" action="escape"/>
     <tr start="q7" token="$" end="q6" action="escape"/>
 
+    <tr start="q8" token="nl" end="q8"/>
     <tr start="q8" token=" " end="q8"/>
     <tr start="q8" token="other" end="q1" action="add_char"/>
     <tr start="q8" token="" end=""/>
@@ -247,6 +249,7 @@
     <tr start="q14" token="|" end="q5" action="add_alt"/>
     <tr start="q14" token="\" end="q7"/>
     <tr start="q14" token=" " end="q14"/>
+    <tr start="q14" token="[" end="q32" action="start_charset"/>
     <tr start="q14" token="nl" end="q8" action="add_rule"/>
     <tr start="q14" token="other" end="q6" action="start_right_token"/>
     <tr start="q14" token="$" end="q15" action="add_empty"/>
@@ -361,6 +364,7 @@
     <tr start="q32" token="\" end="q34"/>
 
     <tr start="q33" token="]" end="q6" action="add_range"/>
+    <tr start="q33" token="\" end="q34"/>
     <tr start="q33" token="other" end="q33" action="set_left_char"/>
     <tr start="q33" token="-" end="q35"/>
 
