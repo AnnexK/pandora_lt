@@ -1,0 +1,45 @@
+NS_BODY -: NS_ELEMENT REST_NS
+NS_ELEMENT -: FOO | NS
+REST_NS -: NS_BODY | $
+NS -: namespace <count> ID <set_current_ns> { <count> NS_BODY_EM } <goto_parent>
+NS_BODY_EM -: $ | NS_BODY
+ID -: nkw <set_nkw> [A-Za-z_] <add_char> REST_ID
+REST_ID -: [A-Za-z0-9_] <add_char> REST_ID | $
+FOO -: RETURN_TYPE <register_type> ID <create_foo> ( <count> PARAM_LIST ) <count> FOO_BODY <commit_foo>
+FOO_BODY -: { <count> } <make_impl> | ; <make_prot>
+RETURN_TYPE -: BASE_TYPE | void <register_prim>
+
+BASE_TYPE -: int<register_prim> INTMORE
+BASE_TYPE -: double<register_prim> DBLMORE
+BASE_TYPE -: float<register_prim>
+BASE_TYPE -: bool<register_prim>
+BASE_TYPE -: char<register_prim> CHARMORE
+BASE_TYPE -: long<register_size> LONGMORE
+BASE_TYPE -: short<register_size> SHORTMORE
+BASE_TYPE -: signed<register_sign> SMORE
+BASE_TYPE -: unsigned<register_sign> SMORE
+INTMORE -: $ | signed<register_sign> SINTMORE | unsigned<register_sign> SINTMORE
+INTMORE -: long<register_size> SZINTMORE | short<register_size> SZINTMORE
+DBLMORE -: $ | long<register_size>
+CHARMORE -: $ | signed<register_sign> | unsigned<register_sign>
+LONGMORE -: $ | double<register_prim> | int<register_prim> SZINTMORE
+LONGMORE -: signed<register_sign> SSZMORE | unsigned<register_sign> SSZMORE
+SHORTMORE -: $ | int<register_prim> SZINTMORE 
+SHORTMORE -: signed<register_sign> SSZMORE | unsigned<register_sign> SSZMORE
+SMORE -: $ | int<register_prim> SINTMORE | char<register_prim> 
+SMORE -: long<register_size> SSZMORE | short<register_size> SSZMORE
+SINTMORE -: $ | long<register_size> | short<register_size>
+SZINTMORE -: $ | signed<register_sign> | unsigned<register_sign>
+SSZMORE -: $ | int<register_prim>
+
+PARAM_LIST -: $ | void <count> | PARAM <goto_parent> PARAM_LIST_REST
+PARAM -: BASE_TYPE <register_type> PARAM_NAME <create_param> ARRAY_SPECIFIERS <append_arr_spec>
+PARAM_NAME -: ID | $ 
+PARAM_LIST_REST -: , <count> PARAM_REST | $
+PARAM_REST -: ...<register_ellipsis> | PARAM <goto_parent> PARAM_LIST_REST
+ARRAY_SPECIFIERS -: $ | NULLABLE_SPECIFIER REST_SPECIFIERS
+NULLABLE_SPECIFIER -: \[ <count> NULLABLE_ARR_SIZE \] <add_dim>
+REST_SPECIFIERS -: $ | \[ <count> ARR_SIZE \] <add_dim> REST_SPECIFIERS
+NULLABLE_ARR_SIZE -: $ | ARR_SIZE
+ARR_SIZE -: nkw <set_nkw> [1-9] <add_char> ARR_SIZE_REST
+ARR_SIZE_REST -: [0-9] <add_char> ARR_SIZE_REST | $
