@@ -1,2 +1,2 @@
-from .byte import Dispatcher as ByteDispatcher
-from .rpn import Dispatcher as RPNDispatcher
+from .lexer import Dispatcher as LexDispatcher
+from .dispatcher import Dispatcher as SynDispatcher
