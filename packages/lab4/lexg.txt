@@ -1,0 +1,3 @@
+LEXSTREAM -: LEX | LEX LEXSTREAM
+LEX -: [A-Za-z0-9_] <add_char> | [\[\],;{}()] <append> | [\ \t\n] <delim_char>
+LEX -: . <delim_char> . <delim_char> . <add_ellipsis>
