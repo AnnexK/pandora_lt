@@ -2,7 +2,7 @@ from packages.lr import GrammarParser, GrammarParserException
 from packages.lab4 import LexDispatcher, SynDispatcher
 from pathlib import Path
 
-
+# вывести дерево элементов разбора (НС и функции)
 def print_tree(t):
     _print_tree(t, 0)
 
