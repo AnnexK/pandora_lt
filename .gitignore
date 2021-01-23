@@ -3,5 +3,6 @@
 *.ods
 #*#
 __pycache__
+input.txt
 output.txt
 .vscode/settings.json
