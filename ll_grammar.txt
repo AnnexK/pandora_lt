@@ -1,7 +1,7 @@
 NS_BODY -: NS_ELEMENT REST_NS
 NS_ELEMENT -: FOO | NS
 REST_NS -: NS_BODY | $
-NS -: namespace <count> ID <set_current_ns> { <count> NS_BODY_EM } <goto_parent>
+NS -: namespace <count> ID <set_current_ns> { <count> NS_BODY_EM <goto_parent> } <count>
 NS_BODY_EM -: $ | NS_BODY
 ID -: nkw <set_nkw> [A-Za-z_] <add_char> REST_ID
 REST_ID -: [A-Za-z0-9_] <add_char> REST_ID | $

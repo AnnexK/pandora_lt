@@ -82,7 +82,7 @@ class Dispatcher(LLActionDispatcher):
                 # если под именем в текущем НС находится не НС, выдать ошибку
                 if n.type != 'ns':
                     self.duplicate = ns_name
-                    self.token_counter = self.nkw
+                    self.token_counter = self.nkw_pos
                     return False
                 else:
                     new_ns = n
@@ -99,9 +99,6 @@ class Dispatcher(LLActionDispatcher):
     # перейти на один уровень ниже
     def goto_parent(self, t: str) -> bool:
         self.ns_stack.pop()
-        # посчитать лексему, если лексема - закрывающая скобка
-        if t == '}':
-            self.count(t)
         return True
 
     def register_prim(self, t: str) -> bool:
@@ -136,7 +133,7 @@ class Dispatcher(LLActionDispatcher):
         self.ns_stack.append(F)
         self.elem_type = ''
         self.buffer.clear()
-        self.nkw = -1
+        self.nkw_pos = -1
         return True
 
     def _check_sigs(self, f: NSTreeElement, el: NSTreeElement):
